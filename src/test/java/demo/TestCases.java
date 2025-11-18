@@ -17,8 +17,11 @@ import java.time.Duration;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
+import org.testng.Assert;
 
 
 // import io.github.bonigarcia.wdm.WebDriverManager;
@@ -31,7 +34,7 @@ public class TestCases {
      * TODO: Write your tests here with testng @Test annotation. 
      * Follow `testCase01` `testCase02`... format or what is provided in instructions
      */
-     @Test
+     @Test(enabled=false)
     public void testCase01()
     {
         driver.get("https://www.flipkart.com/");
@@ -46,46 +49,23 @@ public class TestCases {
         
         WebElement searchinputtext=driver.findElement(By.name("q"));
         enterText(searchinputtext,"Washing Machine");
+        int starrating=4;
         WebElement searchbutton=driver.findElement(By.xpath("//button[@type='submit']"));
         click(driver,searchbutton);
         WebElement popularity=driver.findElement(By.xpath("//div[contains(text(),'Popularity')]"));
         click(driver,popularity);
         System.out.println(driver.getCurrentUrl());
         String url=driver.getCurrentUrl();
-         int count=0;
-         try{
-         Thread.sleep(2000);
-
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
         if(url.contains("popularity")){
-        List<WebElement> listofrating=getElements(driver,By.cssSelector("._5OesEi div"));
-       
-         visibilityOfAllElements(listofrating,driver);
-         List<Double> listofvalues=new ArrayList<>();
-        for(WebElement res:listofrating)
-        {
-            String str=res.getText().trim();
-            listofvalues.add(Double.valueOf(str));
-        }
-        System.out.println(listofvalues.size()  +"----"+listofvalues);
-        for(Double d:listofvalues)
-        {
-            if(d<=4 )
-            {
-                count++;
-            }
-        }
-        
-        System.out.println("cout of stasrtas:----"+count);
-        }
-       
+        List<WebElement> listofrating=driver.findElements(By.xpath("//div[@class='_5OesEi']//div[text()<='"+starrating+"']"));
+         int ratingcount=ratingverify(driver,listofrating,starrating);
+         Assert.assertEquals(ratingcount,listofrating.size());
+        }  
 
-    }
-   @Test
+}
+   @Test(enabled=false)
    public void testCase02(){
+    int discount=10;
        driver.get("https://www.flipkart.com/");
     //    WebElement close=driver.findElement(By.cssSelector("._30XB9F"));
     //    waitforelement(driver,close);
@@ -96,44 +76,18 @@ public class TestCases {
         enterText(searchinputtext,"iPhone"); 
         WebElement searchbutton=driver.findElement(By.xpath("//button[@type='submit']"));
         click(driver,searchbutton);
-         try{
-         Thread.sleep(2000);
+       
 
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-         List<WebElement> parentCard=driver.findElements(By.cssSelector(".tUxRFH"));
-        // List<WebElement> titlelist=parentCard.findElements(By.cssSelector(".KzDlHZ"));
-        // List<WebElement> discount=parentCard.findElements(By.cssSelector(".Wphh3N"));
-        List<Double> percen=new ArrayList<>();
+        List<WebElement> parentCart=driver.findElements(By.xpath("//div[contains(@class, 'tUxRFH')]//div[contains(@class, 'UkUFwK')] //span[number(translate(substring-before(., ' '), '%', '')) >= '"+discount+"']"));
+       //  List<WebElement> parentCard=driver.findElements(By.xpath("//div[contains(@class, 'tUxRFH')]//div[contains(@class, 'UkUFwK')] //span[number(translate(substring-before(., ' '), '%', '')) >= 15]"));
+        // Map<String,String> map=new HashSet<>();
+        boolean status=printDiscountTitle(driver,parentCart,discount);
+        Assert.assertTrue(status,"Test case failed");
         
-        for(WebElement ele:parentCard){
-            String cardTitle=ele.findElement(By.cssSelector(".KzDlHZ")).getText();
-            List<WebElement> discountsOfProducts=ele.findElements(By.cssSelector(".UkUFwK"));
-            if(discountsOfProducts.isEmpty())
-            {
-               continue;
-            }
-            String Discounttext=discountsOfProducts.get(0).getText().trim();
-            System.out.println("List of discount "+Discounttext);
-            double discount=Double.valueOf(Discounttext.replace("% off", "").trim());
-            if(discount > 17)
-            {
-                System.out.println(cardTitle+"---"+ discount +"% off");
-            }else{
-                System.out.println(cardTitle+"---"+ discount +"% off" +" is less than 17");
-            }
-            
-            
-        
-        }
         
 
-
-
-   }
-   @Test
+ }
+   @Test(enabled=true)
    public void testCase03()
    {
      driver.get("https://www.flipkart.com/");
@@ -152,31 +106,13 @@ public class TestCases {
         {
             e.printStackTrace();
         }
-         List<WebElement> parentCard=driver.findElements(By.cssSelector(".slAVV4"));
-         List<Integer> review=new ArrayList<>();
-         for(WebElement card:parentCard){
+         
+         
             
-          List<WebElement> reviewele=card.findElements(By.cssSelector(".Wphh3N"));
-          if(!reviewele.isEmpty()){
-            String str=reviewele.get(0).getText().replaceAll("[^0-9]", "").trim();
-            //System.out.println(reviewele.get(0).getText());
-            review.add(Integer.parseInt(str));
-           }
-         }
-        // List<Integer> review=new ArrayList<>();
-         System.out.println(parentCard.size()+" ----"+review.size());
-         Collections.sort(review,Collections.reverseOrder());
-        // System.out.println(review);
-
-        for(int i=0;i<5;i++)
-        {
-            System.out.println(review.get(i));
-            String title=driver.findElement(By.xpath("//div[contains(@class,'slAVV4')]//span[@class='Wphh3N'       and translate(text(), ',()','')='"+review.get(i)+"']/parent::div//preceding-sibling::a[@class='wjcEIp']")).getText();
-            WebElement imageurlele=driver.findElement(By.xpath("//div[contains(@class,'slAVV4')]//span[@class='Wphh3N'       and translate(text(), ',()','')='"+review.get(i)+"']/parent::div/parent::div//img[@class='DByuf4']"));
-            String imageurl=imageurlele.getAttribute("src");
-            System.out.println("Title and Image url of "+i+" Element is "+title+" And imageurl is "+imageurl);
-        }
-
+          By locator=By.cssSelector(".Wphh3N");
+          reviewproducts(driver,locator,5);
+         
+       
 
    }
      
