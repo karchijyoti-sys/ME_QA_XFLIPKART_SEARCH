@@ -154,7 +154,7 @@ public static int ratingverify(WebDriver driver,List<WebElement> element,double 
           }
           
         }
-        System.out.println("Count of washing machine which has start less than or equal to "+startrating+" : "+count);
+        System.out.println("Count of washing machine which has start less than or equal to : "+startrating+" : "+count);
 
     }catch(Exception e)
     {

@@ -34,7 +34,7 @@ public class TestCases {
      * TODO: Write your tests here with testng @Test annotation. 
      * Follow `testCase01` `testCase02`... format or what is provided in instructions
      */
-     @Test(enabled=false)
+     @Test
     public void testCase01()
     {
         driver.get("https://www.flipkart.com/");
@@ -63,7 +63,7 @@ public class TestCases {
         }  
 
 }
-   @Test(enabled=false)
+   @Test
    public void testCase02(){
     int discount=10;
        driver.get("https://www.flipkart.com/");
@@ -87,7 +87,7 @@ public class TestCases {
         
 
  }
-   @Test(enabled=true)
+   @Test
    public void testCase03()
    {
      driver.get("https://www.flipkart.com/");
